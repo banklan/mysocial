@@ -1,0 +1,81 @@
+// Fonts
+// @import url('https://fonts.googleapis.com/css?family=Nunito');
+@import url('https://fonts.googleapis.com/css2?family=Cookie&family=Lato:wght@300;400&family=Nunito+Sans:wght@300&family=Raleway:wght@300;400&family=Tenor+Sans&family=Work+Sans:wght@300;400&display=swap');
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+
+
+*, *::before, *::after{
+    margin: 0;
+    padding: o;
+    border: none;
+    outline: 0;
+    list-style: none;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5{
+    line-height: 1.2;
+    color: var(--color-grey-100);
+}
+
+h1{
+    font-size: 3rem;
+}
+
+h2{
+    font-size: 1.7rem;
+}
+
+p{
+    font-size: 1rem;
+}
+
+a{
+    color: var(--color-grey-100);
+    text-decoration: none !important;
+}
+
+html{
+    scroll-behavior: smooth;
+}
+body{
+    font-family: 'Nunito Sans', sans-serif !important;
+    -webkit-font-smoothing: antialiased!important;
+    background: rgb(116, 116, 116) !important;
+}
+.sidebar{
+    width: 100%;
+    border: 1px solid rgb(201, 201, 201);
+    border-radius: 6px;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding: 12px 10px;
+    display: flex;
+    flex-basis: auto;
+    flex-direction: column;
+    flex-shrink: 0;
+    // min-height: 15px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    background: #fff !important;
+    .subject{
+        font-size: 1.2rem !important;
+        font-weight: 400;
+        text-align: center;
+        margin-bottom: 8px;
+    }
+
+    // box-shadow: ;
+}
+
+.sub-title{
+    font-size: 1rem;
+    font-weight: 400;
+    color: rgb(41, 41, 41);
+}
