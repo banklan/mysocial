@@ -43,6 +43,9 @@ export default {
         },
         UserWasFollowed(){
             return this.$store.getters.UserWasFollowed
+        },
+        unfollowedUser(){
+            return this.$store.getters.unfollowedUser
         }
     },
     watch:{
@@ -54,6 +57,15 @@ export default {
                     this.$store.commit('resetFollow')
                 }
              }
+        },
+        'unfollowedUser':{
+            handler(newVal){
+                if(newVal !== null){
+                    if(this.users.length < 10){
+                        this.users.unshift(newVal)
+                    }
+                }
+            }
         }
     },
     methods: {
@@ -62,8 +74,7 @@ export default {
             axios.get(this.api + '/auth/suggested_follows', this.authHeaders)
             .then((res) => {
                 this.isLoading = false
-                this.users = res.data
-                console.log(res.data)
+                this.users = res.data.splice(0, 10)
             })
         }
     },

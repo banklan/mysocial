@@ -11004,3 +11004,8 @@ body {
   color: rgb(41, 41, 41);
 }
 
+.content_text {
+  color: #1c1c1c;
+  font-size: 2.9rem !important;
+}
+

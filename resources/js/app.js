@@ -31,7 +31,7 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import '@mdi/font/css/materialdesignicons.css'
 
 
-
+// initialize plugins
 Vue.use(VueRouter)
 Vue.use(VeeValidate)
 Vue.use(Moment)
@@ -75,10 +75,9 @@ router.beforeEach((to, from, next) => {
 // })
 
 
-//Rgister vue components here
+//Register vue components here
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('IndexSidebar', require('./components/children/IndexSidebar.vue').default);
-// Vue.component('IndexStatsBar', require('./components/children/IndexStatsBar.vue').default);
 Vue.component('NewPost', require('./components/children/NewPost.vue').default);
 Vue.component('Posts', require('./components/children/Posts.vue').default);
 Vue.component('Post', require('./components/children/Post.vue').default);
@@ -86,15 +85,14 @@ Vue.component('Post', require('./components/children/Post.vue').default);
 // Vue.component('Follows', require('./components/children/Follows.vue').default);
 // Vue.component('SIngleUser', require('./components/children/SIngleUser.vue').default);
 // Vue.component('UserFollowers', require('./components/children/UserFollowers.vue').default);
-// Vue.component('FriendsUserFollow', require('./components/children/FriendsUserFollow.vue').default);
-// Vue.component('Friends', require('./components/children/Friends.vue').default);
 Vue.component('UserFollowers', require('./components/children/UserFollowers.vue').default);
 Vue.component('FollowSiderbars', require('./components/children/FollowSiderbars.vue').default);
-// Vue.component('UserAction', require('./components/children/UserAction.vue').default);
 Vue.component('UsersAuthIsFollowing', require('./components/children/UsersAuthIsFollowing.vue').default);
 Vue.component('UserAuthIsFollowing', require('./components/children/UserAuthIsFollowing.vue').default);
 Vue.component('SuggestedFollows', require('./components/children/SuggestedFollows.vue').default);
 Vue.component('SuggestedFollow', require('./components/children/SuggestedFollow.vue').default);
+Vue.component('UserFollowings', require('./components/includes/UserFollowings.vue').default);
+Vue.component('UserPosts', require('./components/includes/UserPosts.vue').default);
 
 
 
@@ -103,11 +101,7 @@ Vue.component('SuggestedFollow', require('./components/children/SuggestedFollow.
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
-// var corsOptions = {
-//     origin: "http://127.0.0.1:8000"
-//   };
 
-// app.use(cors(corsOptions));
 
 const app = new Vue({
     el: '#app',

@@ -4,6 +4,7 @@ import Register from '../components/Register.vue'
 import UserProfile from '../components/UserProfile.vue'
 import ShowPost from '../components/ShowPost.vue'
 import UpdatePost from '../components/UpdatePost.vue'
+import AccountProfile from '../components/AccountProfile.vue'
 
 
 export default [
@@ -14,4 +15,5 @@ export default [
     { path: '/user-profile/:id', name: 'UserProfile', component: UserProfile },
     { path: '/post/:id/update', name: 'UpdatePost', component: UpdatePost },
     { path: '/post/:id', name: 'ShowPost', component: ShowPost },
+    { path: '/account', name: 'AccountProfile', component: AccountProfile },
 ]

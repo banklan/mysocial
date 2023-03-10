@@ -78,7 +78,7 @@ export default {
                 {title: 'Posts', path: '/'},
                 {title: 'MyPosts', path: '/my-posts'},
                 {title: 'CreatePost', path: '/create-post'},
-                {title: 'Profile', path: '/profile'},
+                {title: 'Account', path: '/account'},
             ],
             authAdminMenus: [
                 {title: 'Home', path: '/'},

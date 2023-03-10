@@ -15,6 +15,7 @@ class AuthController extends Controller
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
+    // response with token
     protected function respondWithToken($token)
     {
         $user = auth('api')->user()->id;
@@ -27,15 +28,18 @@ class AuthController extends Controller
         ]);
     }
 
+    //guard
     public function guard(){
         return Auth::Guard('api');
     }
 
+    //authenticated user
     public function AuthUser()
     {
         return response()->json(auth('api')->user());
     }
 
+    // log in function
     public function login()
     {
         $credentials = request(['email', 'password']);
@@ -47,10 +51,6 @@ class AuthController extends Controller
         if(auth('api')->user()->status == 0){
             return response()->json(['error' => 'Unauthorized'], 551);
         }
-
-        // if(auth('api')->user()->is_verified == 0){
-        //     return response()->json(['error' => 'Not Verified'], 561);
-        // }
 
         $user = auth('api')->user();
         if($user->status == 1){
@@ -88,7 +88,9 @@ class AuthController extends Controller
         return $this->respondWithToken(auth('api')->refresh());
     }
 
+    // register function
     public function register(Request $request){
+        // validate incoming request
         $this->validate($request, [
             'user.first_name' => 'required|min:2|max:40',
             'user.last_name' => 'required|min:2|max:40',
@@ -98,6 +100,7 @@ class AuthController extends Controller
             'user.password_confirmation' => 'required'
         ]);
 
+        // create a new user
         $user = new User;
         $user->first_name = $request->user['first_name'];
         $user->last_name = $request->user['last_name'];

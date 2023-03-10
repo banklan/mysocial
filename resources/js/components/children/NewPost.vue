@@ -2,11 +2,18 @@
     <div class="wrap">
         <div class="new_post">
             <div class="avatar">
-                <v-avatar>
-                    <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John">
-                </v-avatar>
+                <template v-if="authUser.picture">
+                    <v-avatar>
+                        <v-img v-if="authUser.picture" :src="authUser.picture" alt="profile picture" transition="scale-transition"></v-img>
+                    </v-avatar>
+                </template>
+                <template v-else>
+                    <v-avatar color="primary" class="headline white--text">
+                     {{ authUser.fullname | initials }}
+                    </v-avatar>
+                </template>
             </div>
-            <v-textarea v-model="post" solo rows="3" auto-grow clearable placeholder="What's on your mind" @keyup.enter="submit" required v-validate="'required|min:1|max:1000'" :error-messages="errors.collect('post')" name="post"></v-textarea>
+            <v-textarea v-model="post" solo rows="3" auto-grow clearable placeholder="What's on your mind" required v-validate="'required|min:1|max:1000'" :error-messages="errors.collect('post')" name="post"></v-textarea>
         </div>
         <div class="submit">
             <v-btn large dark class="primary" @click="submit" :loading="isLoading">Submit</v-btn>

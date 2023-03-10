@@ -3,7 +3,6 @@ import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import router from '../router/routes'
 import axios from 'axios';
-// import auth from './auth'
 
 Vue.use(Vuex, axios)
 
@@ -24,11 +23,15 @@ export const store = new Vuex.Store({
         redirectOnLogin: redirectOnLogin,
         newPost: null,
         UserWasUnfollowed: false,
+        unfollowedUserIndex: null,
         unfollowedUser: null,
         UserWasFollowed: false,
         followedUser: null,
+        followedUserIndex: null,
         postUpdated: false,
         postDeleted: false,
+        deletedPost: null,
+        authProfileUpdated: false,
     },
     getters: {
         api(state){
@@ -53,6 +56,10 @@ export const store = new Vuex.Store({
         {
             return state.unfollowedUser
         },
+        unfollowedUserIndex(state)
+        {
+            return state.unfollowedUserIndex
+        },
         UserWasUnfollowed(state)
         {
             return state.UserWasUnfollowed
@@ -65,6 +72,10 @@ export const store = new Vuex.Store({
         {
             return state.followedUser
         },
+        followedUserIndex(state)
+        {
+            return state.followedUserIndex
+        },
         postUpdated(state)
         {
             return state.postUpdated
@@ -72,6 +83,12 @@ export const store = new Vuex.Store({
         postDeleted(state)
         {
             return state.postDeleted
+        },
+        deletedPost(state){
+            return state.deletedPost
+        },
+        authProfileUpdated(state){
+            return state.authProfileUpdated
         }
     },
     actions: {
@@ -105,6 +122,10 @@ export const store = new Vuex.Store({
         {
             state.UserWasUnfollowed = true
         },
+        unfollowedUserIndex(state, payload)
+        {
+            state.unfollowedUserIndex = payload
+        },
         unfollowedUser(state, payload)
         {
             state.unfollowedUser = payload
@@ -118,6 +139,10 @@ export const store = new Vuex.Store({
         {
             state.UserWasFollowed = true
         },
+        followedUserIndex(state, payload)
+        {
+            state.followedUserIndex = payload
+        },
         followedUser(state, payload)
         {
             state.followedUser = payload
@@ -129,10 +154,28 @@ export const store = new Vuex.Store({
         {
             state.postDeleted = true
         },
-        // resetPostAlerts(state)
-        // {
-        //     state.postDeleted = false
-        //     state.postUpdated = false
-        // }
+        delPost(state, payload){
+            state.postDeleted = true
+            state.deletedPost = payload
+        },
+        resetPostAlerts(state)
+        {
+            state.postDeleted = false
+            state.postUpdated = false
+        },
+        updatedAuthProfile(state, payload)
+        {
+            state.authUser.first_name = payload.first_name
+            state.authUser.last_name = payload.last_name
+            state.authUser.phone = payload.phone
+            state.authUser.picture = payload.picture
+            state.authUser.fullname = payload.first_name + ' '+ payload.last_name
+            window.localStorage.setItem('authUser', JSON.stringify(state.authUser))
+            state.authProfileUpdated = true
+        },
+        resetAuthFlashMsg(state, payload)
+        {
+            state.authProfileUpdated = false
+        },
     }
 })

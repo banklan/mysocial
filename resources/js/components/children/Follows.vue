@@ -48,7 +48,6 @@ export default {
             axios.get(this.api + '/auth/get_followers', this.authHeaders)
             .then((res) => {
                 this.suggestions = res.data
-                console.log(res.data)
             })
         }
     },

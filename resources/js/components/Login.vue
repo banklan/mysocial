@@ -72,8 +72,7 @@ export default {
                         this.isLoading = false
                         this.authError = false
                         this.$store.commit('userLoginSuccess', res.data)
-                        // this.getAuthService()
-
+                        
                         // check if there is redirect on login
                         if(this.redirectOnLogin){
                             this.$router.push(this.redirectOnLogin)
@@ -81,7 +80,7 @@ export default {
                         }else{
                             this.$router.push({name: 'Home'})
                         }
-                    }).catch((err) => {
+                    }).catch((err) => {//if login fails
                         this.isBusy = false
                         this.authError = true
                         if(err.response.status === 441){

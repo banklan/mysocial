@@ -2,10 +2,11 @@
     <v-container>
         <v-skeleton-loader type="article" v-if="isLoading" elevation="12" min-width="50" min-height="400"></v-skeleton-loader>
         <v-row justify="space-around" v-else class="mt-6">
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="5">
                 <v-card light min-height="400" elevation="12" raised class="mx-auto">
-                    <img src="/assets/images/profile1.jpg" alt="profile picture" height="350" width="100%">
-                    <v-card-text class="mt-5">
+                    <v-img v-if="user.picture" :src="user.picture" alt="profile picture" max-height="500" transition="scale-transition"></v-img>
+                    <v-img v-else src="/assets/shared/no-image.png" width="100%" height="450" transition="scale-transition"></v-img>
+                    <v-card-text class="mt-5 subtitle-1">
                         <table class="table">
                             <thead></thead>
                             <tbody>
@@ -31,38 +32,8 @@
                 </v-card>
             </v-col>
             <v-col cols="12" md="5">
-                <v-card light min-height="100" elevation="12" raised class="mx-auto">
-                    <v-card-title class="primary white--text justify-center title">{{ user.first_name }}'s Posts</v-card-title>
-                    <v-card-text class="mt-5">
-                        <div class="posts" v-if="posts.length > 0">
-                            <div class="post" v-for="post in posts" :key="post.id">
-                                <p>
-                                    <router-link :to="{name:'ShowPost', params:{id: post.id}}">{{ post.content | truncate(45) }}</router-link>
-                                </p>
-                                <v-divider></v-divider>
-                            </div>
-                        </div>
-                        <div class="mt-5" v-else>
-                            <p>{{ user.first_name }} has no posts yet.</p>
-                        </div>
-                    </v-card-text>
-                </v-card>
-                <v-card light min-height="100" elevation="12" raised class="mx-auto mt-5">
-                    <v-card-title class="primary white--text justify-center title">{{ user.first_name }}'s Friends</v-card-title>
-                    <v-card-text class="mt-5">
-                        <div v-if="follows.length > 0">
-                            <div v-for="user in follows" :key="user.id">
-                                <p>
-                                    <router-link :to="{name:'UserProfile', params:{id: user.id}}">{{ user.fullname }}</router-link>
-                                </p>
-                                <v-divider></v-divider>
-                            </div>
-                        </div>
-                        <div v-else>
-                            <p>{{ user.first_name }} has no followers yet.</p>
-                        </div>
-                    </v-card-text>
-                </v-card>
+                <UserFollowings :user="user" />
+                <UserPosts :user="user" />
             </v-col>
         </v-row>
     </v-container>
@@ -76,7 +47,8 @@ export default {
             user: null,
             posts: [],
             isLoading: false,
-            follows: []
+            follows: [],
+            followings: []
         }
     },
     watch:{
@@ -86,6 +58,7 @@ export default {
                 this.getUser(id)
                 this.getUserPosts(id)
                 this.getUserFollows(id)
+                this.getUserFollowings(id)
             },
             immediate: true,
             deep: true
@@ -111,7 +84,7 @@ export default {
         },
     },
     methods: {
-        getUser(){
+        getUser(){ //get user
             this.isLoading = true
             axios.get(this.api + `/get_user/${this.$route.params.id}`, this.authHeaders)
             .then((res) => {
@@ -119,16 +92,22 @@ export default {
                 this.user = res.data
             })
         },
-        getUserPosts(){
+        getUserPosts(){ //post of this user
             axios.get(this.api + `/get_user_posts/${this.$route.params.id}`, this.authHeaders)
             .then((res) =>{
                 this.posts = res.data
             })
         },
-        getUserFollows(){
+        getUserFollows(){ //users following this usee
             axios.get(this.api + `/get_user_follows/${this.$route.params.id}`, this.authHeaders)
             .then((res) => {
                 this.follows = res.data
+            })
+        },
+        getUserFollowings(){ //users this user is following
+            axios.get(this.api + `/get_user_followings/${this.$route.params.id}`, this.authHeaders)
+            .then((res) => {
+                this.followings = res.data
             })
         }
     },
@@ -136,6 +115,7 @@ export default {
         this.getUser()
         this.getUserPosts()
         this.getUserFollows()
+        this.getUserFollowings()
     },
 }
 </script>

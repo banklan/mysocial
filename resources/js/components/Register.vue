@@ -22,15 +22,13 @@
                             <v-text-field type="password" label="Password" v-model="user.password" required ref="pswd" v-validate="'required|min:5|max:20'" :error-messages="errors.collect('password')" name="password"></v-text-field>
                             <v-text-field type="password" label="Confirm Password" v-model="user.password_confirmation" required v-validate="'required|confirmed:pswd'" :error-messages="errors.collect('password_confirmation')" name="password_confirmation" data-vv-as="password confirmation"></v-text-field>
                         </v-card-text>
-                        <!-- <v-card-actions class="ml-4 mt-n7"> -->
-                            <v-checkbox v-model="agree">
-                                <template v-slot:label>
-                                   <div class="pt-2">I agree to
-                                       <router-link to="/terms-conditions">all the terms, conditions and code of conducts</router-link>.
-                                    </div>
-                                </template>
-                            </v-checkbox>
-                        <!-- </v-card-actions> -->
+                        <v-checkbox v-model="agree">
+                            <template v-slot:label>
+                                <div class="pt-2">I agree to
+                                    <router-link to="/terms-conditions">all the terms, conditions and code of conducts</router-link>.
+                                </div>
+                            </template>
+                        </v-checkbox>
                         <v-card-actions class="justify-center">
                             <v-btn color="primary" width="60%" class="mb-5" large @click="register" :loading="isLoading">Register</v-btn>
                         </v-card-actions>
@@ -96,13 +94,8 @@ export default {
                             this.userCreated = true
                         }).catch((err) =>{
                             this.isLoading = false
-                            console.log(err)
-                            // if(err.response.status === 422){
-                            //     this.createFail = true
-                            //     this.createError = "The email you are trying to register with is already taken. please try another email."
-                            // }else{
-                            //     this.createError = 'There was an error while trying to register. Please ensure you are connected to the internet and try again.'
-                            // }
+                            this.createFail = true
+                            this.createError = 'There was an error while trying to register. Please ensure you are connected to the internet and try again.'
                         })
                     }else{
                         this.agreeToTerms = true

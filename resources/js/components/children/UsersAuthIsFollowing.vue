@@ -54,27 +54,38 @@ export default {
         },
         userUnfollowed(){
             return this.$store.getters.UserWasUnfollowed
+        },
+        followedUser(){
+            return this.$store.getters.followedUser
         }
     },
     watch:{
         'userUnfollowed':{
              handler(newVal){
                 if(newVal == true){
-                    let user = this.$store.getters.unfollowedUser
+                    let user = this.$store.getters.unfollowedUserIndex
                     this.users.splice(user, 1)
                     this.$store.commit('resetFollow')
                 }
              }
+        },
+        'followedUser':{
+            handler(newVal){
+                if(newVal != null){
+                    if(this.users.length < 5){
+                        this.users.unshift(newVal)
+                    }
+                }
+            }
         }
     },
     methods: {
-        getUsers(){
+        getUsers(){ //get users
             this.isLoading = true
             axios.get(this.api + '/auth/users_auth_is_following', this.authHeaders)
             .then((res) => {
                 this.isLoading = false
                 this.users = res.data
-                console.log(res.data)
             })
         }
     },

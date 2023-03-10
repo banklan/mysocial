@@ -2,7 +2,7 @@
     <v-container>
         <v-row class="mt-10">
             <v-col cols="12" md="3">
-                <v-btn rounded color="primary_variant" dark elevation="4" left @click.prevent="$router.go(-1)"><v-icon left>arrow_left</v-icon> Back</v-btn>
+                <v-btn rounded color="primary_variant" dark elevation="4" left :to="{name: 'Home'}"><v-icon left>arrow_left</v-icon> Back</v-btn>
             </v-col>
         </v-row>
         <v-row justify="space-around" class="mt-4">
@@ -15,8 +15,11 @@
                                 <div class="post_content">
                                     <div class="post_author">
                                         <div class="avatar">
-                                            <v-avatar>
-                                                <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John">
+                                            <v-avatar v-if="post.user && post.user.picture">
+                                                <v-img :src="post.user && post.user.picture" alt="profile picture" transition="scale-transition"></v-img>
+                                            </v-avatar>
+                                            <v-avatar v-else color="primary" class="title white--text">
+                                                {{ post.user && post.user.fullname | initials }}
                                             </v-avatar>
                                         </div>
                                     </div>
@@ -75,9 +78,9 @@
                     <v-card-text class="mt-5">
                         <div class="other_posts">
                             <template v-if="otherPosts.length > 0">
-                                <div class="other" v-for="post in otherPosts" :key="post.id">
+                                <div class="other" v-for="(post, index) in otherPosts" :key="post.id">
                                     <p><router-link :to="{name: 'ShowPost', params:{id: post.id}}">{{ post.content | truncate(45) }}</router-link></p>
-                                    <v-divider></v-divider>
+                                    <v-divider v-if="index < otherPosts.length - 1"></v-divider>
                                 </div>
                             </template>
                             <template v-else>
@@ -91,18 +94,18 @@
             </v-col>
         </v-row>
         <v-dialog v-model="confirmDelDialogue" max-width="480">
-            <v-card min-height="150">
+            <v-card min-height="150" class="mx-auto">
                 <v-card-title class="subtitle-1 primary white--text justify-center">Delete Post</v-card-title>
-                <v-card-text class="mt-5 body_text">
+                <v-card-text class="mt-5 display content_text">
                     Are you sure you want to delete this post?
                 </v-card-text>
-                <v-card-actions class="pb-8 mt-2 justify-center">
+                <v-card-actions class="pb-8 mt-2 justify-space-around">
                     <v-btn text color="red darken--2" @click="confirmDelDialogue = false" width="40%">Cancel</v-btn>
-                    <v-btn dark color="primary" :loading="isDeleting" @click="delPost" width="40%">Clear</v-btn>
+                    <v-btn dark color="primary" :loading="isDeleting" @click="delPost" width="40%">Yes, Delete</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
-        <v-snackbar v-model="postUpdated" :timeout="4000" top color="green darken-1 white--text">
+        <v-snackbar :value="postUpdated" :timeout="4000" top color="green darken-1 white--text">
             The post has been updated.
             <v-btn text color="white--text" @click="postUpdated = false">Close</v-btn>
         </v-snackbar>
@@ -120,6 +123,7 @@ export default {
             otherPosts: [],
             confirmDelDialogue: false,
             isDeleting: false,
+            isAuthor: false,
         }
     },
     computed:{
@@ -140,12 +144,6 @@ export default {
             }
             return headers
         },
-        isAuthor(){
-            if(this.post.user_id == this.authUser && this.authUser.id){
-                return true
-            }
-            return false
-        },
         postUpdated(){
             return this.$store.getters.postUpdated
         },
@@ -161,16 +159,23 @@ export default {
             deep: true
         }
     },
+    beforeRouteLeave (to, from, next) {
+        this.$store.commit('resetPostAlerts')
+        next()
+    },
     methods: {
-        getPost(){
+        getPost(){//get a single post
             this.isLoading = true
             axios.get(this.api + `/get_post/${this.$route.params.id}`)
             .then((res) => {
                 this.isLoading = false
                 this.post = res.data
+                if(res.data.user_id === this.authUser.id){
+                    this.isAuthor = true
+                }
             })
         },
-        likePost(){
+        likePost(){ //like a post
             axios.post(this.api + `/auth/like_post/${this.post.id}`, {}, this.authHeaders)
             .then((res) => {
                 if(res.data.message === 'liked'){
@@ -186,19 +191,19 @@ export default {
             const status = this.post.likes.some(x => x.user_id === this.authUser && this.authUser.id)
             this.isLiked = status
         },
-        getOtherPosts(){
+        getOtherPosts(){ //get other posts by author
             axios.get(this.api + `/get_other_posts/${this.$route.params.id}`)
             .then((res) => {
                 this.otherPosts = res.data
             })
         },
-        delPost(){
+        delPost(){ //delete a post
             this.isDeleting = true
             axios.post(this.api + `/auth/delete_post/${this.$route.params.id}`, {}, this.authHeaders)
             .then((res) => {
                 this.isDeleting = false
-                // this.$store.commit('postDeleted')
-                // this.$router.push('/')
+                this.$store.commit('postDeleted')
+                this.$router.push('/')
             })
         }
     },
@@ -219,7 +224,7 @@ export default {
     .post_content{
         display: flex;
         justify-content: space-around;
-        gap: .6rem;
+        gap: .8rem;
         padding: 12px 8px 5px;
         overflow: hidden;
 
@@ -230,7 +235,7 @@ export default {
 
             .user{
                 .name{
-                    font-size: 1rem;
+                    font-size: 1.1rem;
                     color: #004EFF;
                 }
                 .published{
@@ -242,6 +247,11 @@ export default {
             .body{
                 margin-top: 6px;
                 cursor: pointer;
+
+                 p{
+                    font-size: 1.1rem !important;
+                    line-height: 1.6 !important;
+                }
             }
         }
     }
@@ -256,7 +266,7 @@ export default {
         margin-top: -8px;
 
         i{
-            font-size: 1rem;
+            font-size: 1.2rem;
             color: #004EFF;
         }
 
@@ -276,10 +286,13 @@ export default {
     color: rgb(44, 44, 44) !important;
 }
 .other_posts p{
-    font-size: .9rem;
+    font-size: 1rem;
 }
 .likes_count{
     font-size: .9rem;
     color: #3371FF;
+}
+.delete .v-btn i{
+    color: #ef0d0d;
 }
 </style>

@@ -30,6 +30,7 @@ Route::group(['middleware' => 'api'], function ($router) {
     Route::get('get_user/{id}', 'UserController@getUser');
     Route::get('get_user_posts/{id}', 'UserController@getUserPosts');
     Route::get('get_user_follows/{id}', 'UserController@getUserFollows');
+    Route::get('get_user_followings/{id}', 'UserController@getUserFollowings');
 });
 
 
@@ -53,4 +54,8 @@ Route::group(['middleware' => 'jwt.auth',  'prefix' => 'auth'], function($router
     Route::post('update_post/{id}', 'PostController@updatePost');
     Route::post('delete_post/{id}', 'PostController@deletePost');
     Route::get('check_if_post_is_liked/{id}', 'PostController@checkIfLiked');
+    Route::post('update_auth_profile', 'ProfileController@update');
+    Route::post('confirm_current_pswd', 'ProfileController@confirmCurrentPswd');
+    Route::post('update_auth_profile_password', 'ProfileController@updatePassword');
+    Route::post('update_auth_profile_picture', 'ProfileController@updateProfilePicture');
 });

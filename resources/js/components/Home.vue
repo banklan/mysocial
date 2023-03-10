@@ -22,9 +22,9 @@ export default {
             return this.$store.getters.userIsLoggedIn
         },
     },
-    // beforeRouteLeave (to, from, next) {
-    //     this.$store.commit('resetPostAlerts')
-    //     next()
-    // },
+    beforeRouteLeave (to, from, next) {
+        this.$store.commit('resetPostAlerts')
+        next()
+    },
 }
 </script>

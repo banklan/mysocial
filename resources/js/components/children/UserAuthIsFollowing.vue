@@ -4,7 +4,7 @@
             <router-link :to="{name: 'UserProfile', params:{id: user.id}}">{{ user.fullname }}</router-link>
         </div>
         <div class="action">
-            <v-btn dark class="primary" raised small rounded @click="unFollow">Unfollow</v-btn>
+            <v-btn dark class="secondary" raised small rounded @click="unFollow">Unfollow</v-btn>
         </div>
     </div>
 </template>
@@ -42,7 +42,8 @@ export default {
                 console.log(res.data)
                 if(res.data.message == 'success'){
                     this.$store.commit('UserWasUnfollowed')
-                    this.$store.commit('unfollowedUser', this.index)
+                    this.$store.commit('unfollowedUserIndex', this.index)
+                    this.$store.commit('unfollowedUser', this.user)
                 }
             })
         }
@@ -62,7 +63,7 @@ export default {
 
         .name{
             a{
-                font-size: .9rem;
+                font-size: 1rem;
             }
         }
     }

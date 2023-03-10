@@ -4,8 +4,11 @@
             <div class="post_content" @click="showPost">
                 <div class="post_author">
                     <div class="avatar">
-                        <v-avatar>
-                            <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John">
+                        <v-avatar v-if="post.user && post.user.picture">
+                            <v-img :src="post.user && post.user.picture" alt="profile picture" transition="scale-transition"></v-img>
+                        </v-avatar>
+                        <v-avatar v-else color="primary" class="title white--text">
+                            {{ post.user && post.user.fullname | initials }}
                         </v-avatar>
                     </div>
                 </div>
@@ -25,7 +28,7 @@
                     <template v-if="userIsLoggedIn">
                         <template v-if="isAuthor">
                             <i class="uil uil-heart-alt"></i>
-                            <small v-if="post.likes.length > 0" class="likes_count">{{ post.likes.length }}</small>
+                            <small v-if="post.likes && post.likes.length > 0" class="likes_count">{{ post.likes && post.likes.length }}</small>
                         </template>
                         <template v-else>
                             <v-btn v-if="isLiked" small icon color="transparent" @click="likePost">
@@ -39,31 +42,46 @@
                     </template>
                     <template v-else>
                         <i class="uil uil-heart-alt"></i>
-                        <small v-if="post.likes.length > 0" class="likes_count">{{ post.likes.length }}</small>
+                        <small v-if="post.likes && post.likes.length > 0" class="likes_count">{{ post.likes && post.likes.length }}</small>
                     </template>
                 </div>
                 <div class="edit" v-if="isAuthor">
-                    <v-btn small icon color="transparent">
+                    <v-btn small icon color="transparent" :to="{name: 'UpdatePost', params: {id: post.id}}">
                         <i class="uil uil-edit-alt"></i>
                     </v-btn>
                 </div>
                 <div class="delete" v-if="isAuthor">
-                    <v-btn small icon color="transparent">
+                    <v-btn small icon color="transparent" @click="confirmDelDialogue = true">
                         <i class="uil uil-trash-alt"></i>
                     </v-btn>
                 </div>
             </div>
         </div>
+        <v-dialog v-model="confirmDelDialogue" max-width="480">
+            <v-card min-height="150" class="mx-auto">
+                <v-card-title class="subtitle-1 primary white--text justify-center">Delete Post</v-card-title>
+                <v-card-text class="mt-5 subtitle-1">
+                    Are you sure you want to delete this post?
+                </v-card-text>
+                <v-card-actions class="pb-8 mt-2 justify-space-around">
+                    <v-btn text color="red darken--2" @click="confirmDelDialogue = false" width="40%">Cancel</v-btn>
+                    <v-btn dark color="primary" :loading="isDeleting" @click="delPost" width="40%">Yes, Delete</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </div>
 </template>
 
 <script>
 export default {
-    props: ['post'],
+    props: ['post', 'index'],
     data() {
         return {
             miniContent: true,
-            isLiked: false
+            isLiked: false,
+            confirmDelDialogue: false,
+            isDeleting: false,
+            isAuthor: false,
         }
     },
     computed:{
@@ -84,13 +102,6 @@ export default {
             }
             return headers
         },
-        isAuthor(){
-            if(this.post.user_id === this.authUser && this.authUser.id){
-                return true
-            }
-            return false
-        },
-
     },
     methods: {
         expandContent(){
@@ -112,13 +123,11 @@ export default {
             let res = []
             const status = this.post.likes.find(x => x.user_id === this.authUser && this.authUser.id)
             this.res.push(status)
-            console.log(res)
         },
-        checkIfLiked(){
+        checkIfLiked(){ //check if auth user has liked this post
             if(this.userIsLoggedIn){
                 axios.get(this.api + `/auth/check_if_post_is_liked/${this.post.id}`, this.authHeaders)
                 .then((res) => {
-                    console.log(res.data)
                     if(res.data.message === 1){
                         this.isLiked = true
                     }else{
@@ -127,12 +136,26 @@ export default {
                 })
             }
         },
-        showPost(){
+        showPost(){ //route to show post
             this.$router.push({name: 'ShowPost', params: {id: this.post.id}})
+        },
+        checkIfAuthor(){
+            if(this.post.user_id === this.authUser.id){
+                this.isAuthor = true
+            }
+        },
+        delPost(){ //delete a post
+            this.isDeleting = true
+            axios.post(this.api + `/auth/delete_post/${this.post.id}`, {}, this.authHeaders)
+            .then((res) => {
+                this.isDeleting = false
+                this.$store.commit('delPost', this.index)
+            })
         }
     },
     created() {
         this.checkIfLiked()
+        this.checkIfAuthor()
     },
 }
 </script>
@@ -154,7 +177,7 @@ export default {
             .post_content{
                 display: flex;
                 justify-content: space-around;
-                gap: .6rem;
+                gap: .8rem;
                 padding: 12px 8px 5px;
                 cursor: pointer;
                 overflow: hidden;
@@ -166,7 +189,7 @@ export default {
 
                     .user{
                         .name{
-                            font-size: 1rem;
+                            font-size: 1.1rem;
                             color: #004EFF;
                         }
                         .published{
@@ -178,6 +201,11 @@ export default {
                     .body{
                         margin-top: 6px;
                         cursor: pointer;
+
+                        p{
+                            font-size: 1.1rem !important;
+                            line-height: 1.6 !important;
+                        }
                     }
                 }
             }
@@ -212,5 +240,8 @@ export default {
     .likes_count{
         font-size: .9rem;
         color: #3371FF;
+    }
+    .delete .v-btn i{
+        color: #ef0d0d !important;
     }
 </style>

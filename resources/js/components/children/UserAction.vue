@@ -40,7 +40,6 @@ export default {
         follow(){
             axios.post(this.api + `/auth/follow/${this.user.id}`, {}, this.authHeaders)
             .then((res) => {
-                console.log(res.data)
                 if(res.data.message == 'followed'){
 
                 }

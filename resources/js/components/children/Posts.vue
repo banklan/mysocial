@@ -2,11 +2,11 @@
     <div class="posts">
         <v-skeleton-loader type="list-item-avatar-three-line" v-if="isLoading" elevation="12" min-width="50" min-height="400"></v-skeleton-loader>
         <template v-else>
-            <div v-for="post in posts" :key="post.id">
-                <Post :post="post"/>
+            <div v-for="(post, index) in posts" :key="post.id">
+                <Post :post="post" :index="index" />
             </div>
         </template>
-        <v-snackbar v-model="postDeleted" :timeout="4000" top color="green darken-1 white--text">
+        <v-snackbar :value="postDeleted" :timeout="4000" top color="green darken-1 white--text">
             A post has been deleted.
             <v-btn text color="white--text" @click="postDeleted = false">Close</v-btn>
         </v-snackbar>
@@ -45,24 +45,31 @@ export default {
         },
         postDeleted(){
             return this.$store.getters.postDeleted
+        },
+        deletedPost(){
+            return this.$store.getters.deletedPost
         }
     },
-    // beforeRouteLeave (to, from, next) {
-    //     this.$store.commit('resetPostAlerts')
-    //     next()
-    // },
-    watch: {
+    beforeRouteLeave (to, from, next) {
+        this.$store.commit('resetPostAlerts')
+        next()
+    },
+    watch: { //watch for change in NewPost
         newPost(newVal){
             this.posts.unshift(newVal)
+        },
+        deletedPost(newVal){
+            if(newVal !== null){
+                this.posts.splice(newVal, 1)
+            }
         }
     },
     methods: {
-        getPosts(){
+        getPosts(){ //get all posts
             this.isLoading = true
             axios.get(this.api + '/get_posts').then((res) => { //get posts
                 this.isLoading = false
                 this.posts = res.data
-                console.log(res.data)
             }).catch(() => { //if get post fails
                 this.isLoading = false
                 this.cannotFetchPost = true

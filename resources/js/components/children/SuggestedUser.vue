@@ -43,7 +43,6 @@ export default {
             .then((res) => {
                 this.isBusy = false
                 this.isFollowing = true
-                console.log(res.data)
             }).catch(() => {
                 this.isBusy = false
             })
@@ -68,6 +67,5 @@ export default {
             font-size: .8rem;
             color: rgb(95, 95, 95);
         }
-        // border-bottom: 1px solid #333;
     }
 </style>

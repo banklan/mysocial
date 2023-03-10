@@ -1,12 +1,5 @@
 import Vue from 'vue'
 
-Vue.filter('capFirstLetter', (str) =>
-{
-    if (str) {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-});
-
 Vue.filter('truncate', (string, value) => {
     if (string && string.length > value) {
         return string.substring(0, value) + "...";
@@ -21,4 +14,14 @@ Vue.filter('pluralize', (int, string) => {
     }else{
         return int + ' '+ string +'s'
     }
+})
+
+Vue.filter('initials', (string) =>{
+    var names = string.split(' '),
+        initials = names[0].substring(0, 1).toUpperCase();
+    
+    if (names.length > 1) {
+        initials += names[names.length - 1].substring(0, 1).toUpperCase();
+    }
+    return initials;
 })
